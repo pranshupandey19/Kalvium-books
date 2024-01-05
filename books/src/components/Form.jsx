@@ -8,13 +8,16 @@ import { Link } from "react-router-dom";
 const Form = () => {
   const dispatch = useDispatch();
 
+  // Get submitted form data from Redux state
   const submittedData = useSelector((e) => {
     return e.formData;
   });
-  
- let savedData = JSON.parse(localStorage.getItem("data"))
+
+  // Retrieve saved data from local storage
+  let savedData = JSON.parse(localStorage.getItem("data"));
   console.log("savedData: ", savedData);
-  
+
+  // React Hook Form usage
   const {
     register,
     handleSubmit,
@@ -23,8 +26,9 @@ const Form = () => {
     formState: { errors, isSubmitSuccessful, isSubmitted },
   } = useForm();
   console.log("errors: ", errors);
-
   console.log(watch());
+
+  // Form submission handler
   const formSubmitHandler = (data) => {
     toast.success("Form Submitted", {
       theme: "dark",
@@ -32,29 +36,38 @@ const Form = () => {
     localStorage.setItem("data", JSON.stringify(data));
     console.log("data: ", data);
     dispatch(formData(data));
-    dispatch(updateSavedData(data))
-    reset()
+    dispatch(updateSavedData(data));
+    reset();
   };
+
+  // Watching for password changes
   const password = watch("password");
-  const handleReset = ()=>{
-    dispatch(formData({}))
-    localStorage.clear()
-    dispatch(updateSavedData(null))
-  }
+
+  // Function to handle form reset
+  const handleReset = () => {
+    dispatch(formData({})); // Clear the form data in Redux state
+    localStorage.clear(); // Clear localStorage
+    dispatch(updateSavedData(null)); // Update Redux state for saved data
+  };
+
   return (
     <div id="container">
+      {/* Conditional rendering based on savedData */}
       {savedData != null ? (
-              <div id="registered">
-              <div id="registered-box">
-                <div id="reg-text">You Are Registered!</div>
-                <div id="buttons">
-                  <Link to={"/"}>
-                  <button id="back-to-home">Back to Home</button>
-                  </Link>
-                <button id="reset" onClick={handleReset}>Reset</button>
-                </div>
-              </div>
+        <div id="registered">
+          <div id="registered-box">
+            <div id="reg-text">You Are Registered!</div>
+            <div id="buttons">
+              {/* Link to navigate back to Home */}
+              <Link to={"/"}>
+                <button id="back-to-home">Back to Home</button>
+              </Link>
+              <button id="reset" onClick={handleReset}>
+                Reset
+              </button>
             </div>
+          </div>
+        </div>
       ) : (
         <div className="form-container">
           <fieldset>
@@ -119,10 +132,6 @@ const Form = () => {
               <p className="err">{errors.confirm_password?.message}</p>
 
               <input type="submit" value={"Sign up"} />
-
-              {/* <button className='reset' onClick={()=>{
-reset()
-}}> Reset</button> */}
             </form>
           </fieldset>
         </div>
@@ -132,7 +141,3 @@ reset()
 };
 
 export default Form;
-
-
-
-// Object.keys(submittedData).length != 0
